@@ -44,12 +44,14 @@ class DiscreteQueueObservation(ObservationFunction):
         return spaces.MultiDiscrete([self.ts.num_green_phases, 2] + [len(QUEUE_BINS) + 1] * n_edges)
 
 
-def net_file(tls: str = "static") -> str:
-    return str(config.NETS_DIR / "single" / f"cruce_{tls}.net.xml")
+def net_file(tls: str = "static", net: str = "single") -> str:
+    """Red de SUMO. net='single' es el cruce sintético; si no, una intersección real (nets/<net>/)."""
+    prefix = "cruce" if net == "single" else net
+    return str(config.NETS_DIR / net / f"{prefix}_{tls}.net.xml")
 
 
-def route_file(scenario: str) -> str:
-    return str(config.NETS_DIR / "single" / f"{scenario}.rou.xml")
+def route_file(scenario: str, net: str = "single") -> str:
+    return str(config.NETS_DIR / net / f"{scenario}.rou.xml")
 
 
 def tripinfo_path(tag: str) -> Path:
@@ -60,6 +62,7 @@ def tripinfo_path(tag: str) -> Path:
 
 def make_env(
     scenario: str,
+    net: str = "single",
     tls: str = "static",
     observation: str = "default",
     reward_fn: str = "diff-waiting-time",
@@ -75,8 +78,8 @@ def make_env(
     if tripinfo is not None:
         extra += ["--tripinfo-output", str(tripinfo), "--tripinfo-output.write-unfinished", "true"]
     return SumoEnvironment(
-        net_file=net_file(tls),
-        route_file=route_file(scenario),
+        net_file=net_file(tls, net),
+        route_file=route_file(scenario, net),
         single_agent=True,
         use_gui=gui,
         num_seconds=config.NUM_SECONDS,
