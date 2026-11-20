@@ -4,6 +4,7 @@ Se entrena en el escenario 'variable' (la demanda cambia durante la hora) con un
 semilla de SUMO distinta por episodio, para que el agente no memorice un tráfico concreto.
 
 Uso:  python src/train_qlearning.py --episodes 60
+      python src/train_qlearning.py --scenario saturado --name qlearning_saturado
 Salida:
   models/qlearning.pkl               tabla Q
   results/entrenamiento_qlearning.csv curva de aprendizaje por episodio
@@ -27,6 +28,7 @@ def main() -> None:
     parser.add_argument("--gamma", type=float, default=0.95)
     parser.add_argument("--eps-decay", type=float, default=0.93)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--name", default="qlearning", help="nombre del modelo en models/ (sin extensión)")
     args = parser.parse_args()
 
     rng = np.random.default_rng(args.seed)
@@ -61,11 +63,11 @@ def main() -> None:
               f"| eps {agent.epsilon:.3f} | estados {len(agent.q):4d} | {time.time() - t0:4.1f} s")
         agent.end_episode()
 
-    agent.save(config.MODELS_DIR / "qlearning.pkl")
-    out = config.RESULTS_DIR / "entrenamiento_qlearning.csv"
+    agent.save(config.MODELS_DIR / f"{args.name}.pkl")
+    out = config.RESULTS_DIR / f"entrenamiento_{args.name}.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(log).to_csv(out, index=False)
-    print(f"Modelo: models/qlearning.pkl | Curva: {out.relative_to(config.ROOT)}")
+    print(f"Modelo: models/{args.name}.pkl | Curva: {out.relative_to(config.ROOT)}")
 
 
 if __name__ == "__main__":
