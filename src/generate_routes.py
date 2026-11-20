@@ -34,6 +34,15 @@ SCENARIOS = {
         (1200, 2400, {"N": 450, "S": 450, "E": 450, "W": 450}),
         (2400, 3600, {"N": 800, "S": 750, "E": 250, "W": 250}),
     ],
+    # Cerca de la capacidad y con la dirección dominante cambiando: aquí cada cambio de fase
+    # (3 s de amarillo perdidos) cuesta capacidad, y ningún plan fijo es óptimo toda la hora.
+    # Nivel calibrado con un barrido de demanda: a este nivel el ciclo corto de 30 s ya pierde
+    # contra el actuado; con 20 % más demanda todos los controladores colapsan.
+    "saturado": [
+        (0, 1200, {"N": 1760, "S": 1680, "E": 640, "W": 640}),
+        (1200, 2400, {"N": 1200, "S": 1200, "E": 1200, "W": 1200}),
+        (2400, 3600, {"N": 640, "S": 640, "E": 1760, "W": 1680}),
+    ],
 }
 
 
