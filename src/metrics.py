@@ -14,11 +14,16 @@ def episode_metrics(tripinfo: Path, step_infos: list) -> dict:
     trips = ET.parse(tripinfo).getroot().findall("tripinfo")
     finished = [t for t in trips if float(t.get("arrival", -1)) >= 0]
     wait = np.array([float(t.get("waitingTime")) for t in trips])
+    # departDelay = tiempo que el vehículo esperó FUERA de la red porque la cola llegaba al borde.
+    # Sin sumarlo, una política que congestiona la entrada parecería mejor de lo que es.
+    insert = np.array([float(t.get("departDelay")) for t in trips])
     dur = np.array([float(t.get("duration")) for t in finished])
     loss = np.array([float(t.get("timeLoss")) for t in trips])
     stopped = np.array([i["system_total_stopped"] for i in step_infos])
     return {
         "espera_promedio_s": float(wait.mean()) if len(wait) else 0.0,
+        "espera_insercion_promedio_s": float(insert.mean()) if len(insert) else 0.0,
+        "espera_total_promedio_s": float((wait + insert).mean()) if len(wait) else 0.0,
         "tiempo_viaje_promedio_s": float(dur.mean()) if len(dur) else 0.0,
         "perdida_tiempo_promedio_s": float(loss.mean()) if len(loss) else 0.0,
         "vehiculos_completados": len(finished),
