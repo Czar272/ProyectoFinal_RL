@@ -5,4 +5,5 @@ results/tensorboard/
 results/log_*.txt
 models/checkpoints/
 *.pdf
-!docs/*.pdf
+!Proyecto_Final_RL_Pablo_Lopez.pdf
+docs/
