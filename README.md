@@ -7,8 +7,8 @@ Agentes de RL (Q-learning, DQN, PPO) que deciden qué fase de un semáforo activ
 en el simulador [SUMO](https://eclipse.dev/sumo/) y comparados contra semáforos de tiempo fijo, actuados y
 planes fijos optimizados, en un cruce sintético y en dos cruces reales de Ciudad de Guatemala.
 
-- **Documento final:** [`docs/Proyecto_Final_RL_Pablo_Lopez.pdf`](docs/Proyecto_Final_RL_Pablo_Lopez.pdf)
-- **Registro de prompts de IA:** [`docs/registro_prompts.md`](docs/registro_prompts.md)
+- **Documento final:** [`Proyecto_Final_RL_Pablo_Lopez.pdf`](Proyecto_Final_RL_Pablo_Lopez.pdf)
+  (incluye la evaluación crítica del uso de IA en la sección 7)
 
 ## Hallazgos principales
 
@@ -81,7 +81,7 @@ src/
 nets/                    redes y demanda (single = cruce sintético)
 models/                  agentes entrenados
 results/                 CSV de entrenamiento y evaluación, figuras
-docs/                    documento final, propuesta, registro de prompts, guion del video
+Proyecto_Final_RL_Pablo_Lopez.pdf   documento final
 ```
 
 ## Formulación (MDP)
