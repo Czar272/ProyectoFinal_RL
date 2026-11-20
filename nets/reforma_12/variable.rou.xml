@@ -1,0 +1,31 @@
+<routes>
+    <vType id="auto" accel="2.6" decel="4.5" sigma="0.5" length="5" minGap="2.5"/>
+    <route id="r_N2C__C2E" edges="N2C C2E"/>
+    <route id="r_N2C__C2S" edges="N2C C2S"/>
+    <route id="r_S2C__C2E" edges="S2C C2E"/>
+    <route id="r_S2C__C2N" edges="S2C C2N"/>
+    <route id="r_W2C__C2E" edges="W2C C2E"/>
+    <route id="r_W2C__C2N" edges="W2C C2N"/>
+    <route id="r_W2C__C2S" edges="W2C C2S"/>
+    <flow id="f0_N2C__C2E" type="auto" route="r_N2C__C2E" begin="0" end="1200" probability="0.08681" departLane="best" departSpeed="max"/>
+    <flow id="f0_N2C__C2S" type="auto" route="r_N2C__C2S" begin="0" end="1200" probability="0.26042" departLane="best" departSpeed="max"/>
+    <flow id="f0_S2C__C2E" type="auto" route="r_S2C__C2E" begin="0" end="1200" probability="0.08681" departLane="best" departSpeed="max"/>
+    <flow id="f0_S2C__C2N" type="auto" route="r_S2C__C2N" begin="0" end="1200" probability="0.26042" departLane="best" departSpeed="max"/>
+    <flow id="f0_W2C__C2E" type="auto" route="r_W2C__C2E" begin="0" end="1200" probability="0.17500" departLane="best" departSpeed="max"/>
+    <flow id="f0_W2C__C2N" type="auto" route="r_W2C__C2N" begin="0" end="1200" probability="0.05833" departLane="best" departSpeed="max"/>
+    <flow id="f0_W2C__C2S" type="auto" route="r_W2C__C2S" begin="0" end="1200" probability="0.05833" departLane="best" departSpeed="max"/>
+    <flow id="f1_N2C__C2E" type="auto" route="r_N2C__C2E" begin="1200" end="2400" probability="0.13889" departLane="best" departSpeed="max"/>
+    <flow id="f1_N2C__C2S" type="auto" route="r_N2C__C2S" begin="1200" end="2400" probability="0.41667" departLane="best" departSpeed="max"/>
+    <flow id="f1_S2C__C2E" type="auto" route="r_S2C__C2E" begin="1200" end="2400" probability="0.13889" departLane="best" departSpeed="max"/>
+    <flow id="f1_S2C__C2N" type="auto" route="r_S2C__C2N" begin="1200" end="2400" probability="0.41667" departLane="best" departSpeed="max"/>
+    <flow id="f1_W2C__C2E" type="auto" route="r_W2C__C2E" begin="1200" end="2400" probability="0.12500" departLane="best" departSpeed="max"/>
+    <flow id="f1_W2C__C2N" type="auto" route="r_W2C__C2N" begin="1200" end="2400" probability="0.04167" departLane="best" departSpeed="max"/>
+    <flow id="f1_W2C__C2S" type="auto" route="r_W2C__C2S" begin="1200" end="2400" probability="0.04167" departLane="best" departSpeed="max"/>
+    <flow id="f2_N2C__C2E" type="auto" route="r_N2C__C2E" begin="2400" end="3600" probability="0.19097" departLane="best" departSpeed="max"/>
+    <flow id="f2_N2C__C2S" type="auto" route="r_N2C__C2S" begin="2400" end="3600" probability="0.57292" departLane="best" departSpeed="max"/>
+    <flow id="f2_S2C__C2E" type="auto" route="r_S2C__C2E" begin="2400" end="3600" probability="0.19097" departLane="best" departSpeed="max"/>
+    <flow id="f2_S2C__C2N" type="auto" route="r_S2C__C2N" begin="2400" end="3600" probability="0.57292" departLane="best" departSpeed="max"/>
+    <flow id="f2_W2C__C2E" type="auto" route="r_W2C__C2E" begin="2400" end="3600" probability="0.07500" departLane="best" departSpeed="max"/>
+    <flow id="f2_W2C__C2N" type="auto" route="r_W2C__C2N" begin="2400" end="3600" probability="0.02500" departLane="best" departSpeed="max"/>
+    <flow id="f2_W2C__C2S" type="auto" route="r_W2C__C2S" begin="2400" end="3600" probability="0.02500" departLane="best" departSpeed="max"/>
+</routes>

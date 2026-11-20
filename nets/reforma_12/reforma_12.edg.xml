@@ -1,0 +1,8 @@
+<edges>
+    <edge id="N2C" from="N" to="C" numLanes="5" speed="13.89" name="Avenida Reforma"/>
+    <edge id="C2N" from="C" to="N" numLanes="5" speed="13.89" name="Avenida Reforma"/>
+    <edge id="S2C" from="S" to="C" numLanes="5" speed="13.89" name="Avenida Reforma"/>
+    <edge id="C2S" from="C" to="S" numLanes="5" speed="13.89" name="Avenida Reforma"/>
+    <edge id="W2C" from="W" to="C" numLanes="3" speed="13.89" name="12 Calle"/>
+    <edge id="C2E" from="C" to="E" numLanes="3" speed="13.89" name="12 Calle"/>
+</edges>
