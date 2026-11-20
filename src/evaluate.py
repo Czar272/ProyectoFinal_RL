@@ -37,10 +37,10 @@ def load_policy(name: str, net: str = "single"):
         return {"tls": "corto", "fixed_ts": True}, lambda obs: 0
     if name == "fijo_opt":
         return {"tls": "opt", "fixed_ts": True}, lambda obs: 0
-    if name == "qlearning":
+    if name.startswith("qlearning"):  # qlearning, qlearning_saturado, ...
         from agents.qlearning import QLearningAgent
 
-        agent = QLearningAgent.load(models_dir(net) / "qlearning.pkl")
+        agent = QLearningAgent.load(models_dir(net) / f"{name}.pkl")
         return {"observation": "discrete"}, lambda obs: agent.act(obs, greedy=True)
     if name.startswith("dqn") or name.startswith("ppo"):
         from stable_baselines3 import DQN, PPO
@@ -71,8 +71,7 @@ def available_policies(net: str = "single") -> list:
     from pathlib import Path
 
     pols += [p for p, tls in (("fijo_corto", "corto"), ("fijo_opt", "opt")) if Path(net_file(tls, net)).exists()]
-    if (models_dir(net) / "qlearning.pkl").exists():
-        pols.append("qlearning")
+    pols += sorted(p.stem for p in models_dir(net).glob("qlearning*.pkl"))
     pols += sorted(p.stem for p in models_dir(net).glob("*.zip"))
     return pols
 
