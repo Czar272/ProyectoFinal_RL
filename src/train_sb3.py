@@ -22,6 +22,7 @@ from stable_baselines3.common.monitor import Monitor
 
 import config
 from envs import make_env
+from evaluate import models_dir
 
 
 class WaitingTimeInfo(gym.Wrapper):
@@ -62,28 +63,32 @@ def main() -> None:
     parser.add_argument("--algo", choices=["dqn", "ppo"], required=True)
     parser.add_argument("--episodes", type=int, default=100)
     parser.add_argument("--scenario", default="variable")
+    parser.add_argument("--net", default="single", help="single (cruce sintético) o una red real: petapa_53, reforma_12")
     parser.add_argument("--reward", default="diff-waiting-time",
                         choices=["diff-waiting-time", "queue", "pressure", "average-speed"])
     parser.add_argument("--name", default=None)
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()
     name = args.name or args.algo
+    tag = name if args.net == "single" else f"{args.net}_{name}"
+    out_dir = models_dir(args.net)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     config.RESULTS_DIR.mkdir(exist_ok=True)
-    env = make_env(args.scenario, reward_fn=args.reward, seed="random")
-    env = Monitor(WaitingTimeInfo(env), str(config.RESULTS_DIR / f"entrenamiento_{name}"),
+    env = make_env(args.scenario, net=args.net, reward_fn=args.reward, seed="random")
+    env = Monitor(WaitingTimeInfo(env), str(config.RESULTS_DIR / f"entrenamiento_{tag}"),
                   info_keywords=("espera_media_s",))
 
     steps_per_episode = config.NUM_SECONDS // config.DELTA_TIME
     # Checkpoint cada 10 episodios: si el proceso se interrumpe, no se pierde todo el entrenamiento.
     checkpoints = CheckpointCallback(save_freq=10 * steps_per_episode,
-                                     save_path=str(config.MODELS_DIR / "checkpoints"), name_prefix=name)
+                                     save_path=str(config.MODELS_DIR / "checkpoints"), name_prefix=tag)
     model = build_model(args.algo, env, args.seed)
-    model.learn(total_timesteps=args.episodes * steps_per_episode, tb_log_name=name,
+    model.learn(total_timesteps=args.episodes * steps_per_episode, tb_log_name=tag,
                 callback=checkpoints, progress_bar=False)
-    model.save(config.MODELS_DIR / f"{name}.zip")
+    model.save(out_dir / f"{name}.zip")
     env.close()
-    print(f"Modelo: models/{name}.zip | Curva: results/entrenamiento_{name}.monitor.csv")
+    print(f"Modelo: {(out_dir / name).relative_to(config.ROOT)}.zip | Curva: results/entrenamiento_{tag}.monitor.csv")
 
 
 if __name__ == "__main__":

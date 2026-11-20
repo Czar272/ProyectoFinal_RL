@@ -18,12 +18,14 @@ import pandas as pd
 import config
 from agents.qlearning import QLearningAgent
 from envs import make_env
+from evaluate import models_dir
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--episodes", type=int, default=60)
     parser.add_argument("--scenario", default="variable")
+    parser.add_argument("--net", default="single", help="single (cruce sintético) o una red real: petapa_53, reforma_12")
     parser.add_argument("--alpha", type=float, default=0.1)
     parser.add_argument("--gamma", type=float, default=0.95)
     parser.add_argument("--eps-decay", type=float, default=0.93)
@@ -37,7 +39,7 @@ def main() -> None:
     log = []
     for ep in range(1, args.episodes + 1):
         sumo_seed = int(rng.integers(1_000_000))
-        env = make_env(args.scenario, observation="discrete", seed=sumo_seed)
+        env = make_env(args.scenario, net=args.net, observation="discrete", seed=sumo_seed)
         obs, _ = env.reset()
         if agent is None:
             agent = QLearningAgent(env.action_space.n, alpha=args.alpha, gamma=args.gamma,
@@ -63,11 +65,12 @@ def main() -> None:
               f"| eps {agent.epsilon:.3f} | estados {len(agent.q):4d} | {time.time() - t0:4.1f} s")
         agent.end_episode()
 
-    agent.save(config.MODELS_DIR / f"{args.name}.pkl")
-    out = config.RESULTS_DIR / f"entrenamiento_{args.name}.csv"
+    agent.save(models_dir(args.net) / f"{args.name}.pkl")
+    tag = args.name if args.net == "single" else f"{args.net}_{args.name}"
+    out = config.RESULTS_DIR / f"entrenamiento_{tag}.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(log).to_csv(out, index=False)
-    print(f"Modelo: models/{args.name}.pkl | Curva: {out.relative_to(config.ROOT)}")
+    print(f"Modelo: {(models_dir(args.net) / args.name).relative_to(config.ROOT)}.pkl | Curva: {out.relative_to(config.ROOT)}")
 
 
 if __name__ == "__main__":
