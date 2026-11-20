@@ -40,7 +40,10 @@ def style(ax):
 
 def load_eval() -> pd.DataFrame:
     files = sorted(config.RESULTS_DIR.glob("evaluacion*.csv"))
-    df = pd.concat([pd.read_csv(f) for f in files]).drop_duplicates(["politica", "escenario", "semilla"], keep="last")
+    df = pd.concat([pd.read_csv(f) for f in files])
+    if "red" in df:  # solo el cruce sintético (los CSV antiguos no tienen la columna 'red')
+        df = df[df.red.fillna("single") == "single"]
+    df = df[df.escenario.isin(SCEN_LABELS)].drop_duplicates(["politica", "escenario", "semilla"], keep="last")
     return df[df.politica.isin(COLORS)]
 
 
@@ -114,9 +117,46 @@ def plot_learning(curves: dict) -> None:
     plt.close(fig)
 
 
+def plot_saturated() -> None:
+    """Escenario saturado: espera (detenido) y pérdida de tiempo por política, en dos paneles."""
+    files = sorted(config.RESULTS_DIR.glob("evaluacion_saturado*.csv"))
+    if not files:
+        return
+    df = pd.concat([pd.read_csv(f) for f in files])
+    order = ["fijo", "fijo_opt", "fijo_corto", "actuado", "qlearning_saturado", "ppo_saturado"]
+    names = {"fijo": "Tiempo fijo (90 s)", "fijo_opt": "Fijo optimizado", "fijo_corto": "Fijo corto (30 s)",
+             "actuado": "Actuado", "qlearning_saturado": "Q-learning", "ppo_saturado": "PPO"}
+    colors = {"fijo": COLORS["fijo"], "fijo_opt": COLORS["fijo"], "fijo_corto": COLORS["fijo"],
+              "actuado": COLORS["actuado"], "qlearning_saturado": COLORS["qlearning"], "ppo_saturado": COLORS["ppo"]}
+    order = [p for p in order if p in df.politica.unique()]
+    stats = df.groupby("politica")[["espera_total_promedio_s", "perdida_tiempo_promedio_s"]].mean()
+
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4), dpi=150, sharey=True)
+    panels = [("espera_total_promedio_s", "Tiempo detenido por vehículo (s)"),
+              ("perdida_tiempo_promedio_s", "Pérdida de tiempo por vehículo (s)")]
+    ys = range(len(order))
+    for ax, (col, label) in zip(axes, panels):
+        vals = [stats.loc[p, col] for p in order]
+        ax.barh(list(ys), vals, color=[colors[p] for p in order], height=0.65)
+        for y, v in zip(ys, vals):
+            ax.text(v + 1.5, y, f"{v:.1f}", va="center", fontsize=8, color=INK)
+        ax.set_xlabel(label, color=INK)
+        style(ax)
+        ax.grid(axis="x", color=GRID, linewidth=0.8)
+        ax.grid(axis="y", visible=False)
+    axes[0].set_yticks(list(ys), [names[p] for p in order])
+    axes[0].invert_yaxis()
+    fig.suptitle("Escenario saturado: PPO detiene menos a los vehículos que el actuado, con la misma pérdida de tiempo",
+                 x=0.01, ha="left", fontsize=11, color=INK)
+    fig.tight_layout()
+    fig.savefig(FIG_DIR / "comparacion_saturado.png")
+    plt.close(fig)
+
+
 def main() -> None:
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     plot_comparison(load_eval())
+    plot_saturated()
     curves = load_curves()
     if curves:
         plot_learning(curves)
