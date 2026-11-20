@@ -62,7 +62,7 @@ def plot_comparison(df: pd.DataFrame) -> None:
 
     ax.set_xticks(range(len(scenarios)), [SCEN_LABELS[s] for s in scenarios])
     ax.set_ylabel("Espera promedio por vehículo (s)", color=INK)
-    ax.set_title("Los agentes de RL esperan menos que ambos baselines en todos los escenarios",
+    ax.set_title("Q-learning y PPO reducen la espera a la mitad del actuado; DQN es inestable en hora pico",
                  loc="left", fontsize=11, color=INK)
     ax.legend(frameon=False, ncol=len(policies), loc="upper center", bbox_to_anchor=(0.5, -0.1))
     style(ax)
@@ -88,12 +88,21 @@ def load_curves() -> dict:
 
 def plot_learning(curves: dict) -> None:
     fig, ax = plt.subplots(figsize=(9, 4.5), dpi=150)
+    ends = []
     for algo, s in curves.items():
         ep = range(1, len(s) + 1)
         ax.plot(ep, s, color=COLORS[algo], alpha=0.25, linewidth=1)
         smooth = s.rolling(5, min_periods=1).mean()
         ax.plot(ep, smooth, color=COLORS[algo], linewidth=2, label=LABELS[algo])
-        ax.annotate(LABELS[algo], (len(s), smooth.iloc[-1]), xytext=(6, 0), textcoords="offset points",
+        ends.append([smooth.iloc[-1], len(s), algo])
+    # Etiquetas directas al final de cada línea, separadas para que no se encimen
+    ymax = max(c.max() for c in curves.values())
+    gap = 0.045 * ymax
+    ends.sort()
+    for i in range(1, len(ends)):
+        ends[i][0] = max(ends[i][0], ends[i - 1][0] + gap)
+    for y, x, algo in ends:
+        ax.annotate(LABELS[algo], (x, y), xytext=(6, 0), textcoords="offset points",
                     va="center", fontsize=9, color=INK)
     ax.set_xlabel("Episodio (1 hora simulada, escenario variable)", color=INK)
     ax.set_ylabel("Espera media en la red (s)", color=INK)
